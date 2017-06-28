@@ -4,10 +4,7 @@ import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
 import ust.dhl.utils.IOUtils;
 
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -183,23 +180,37 @@ public class ChineseSegmenter {
     }
 
     public static void segmentTCP() throws Exception {
+        CRFClassifier<CoreLabel> segmenter = initSegmenter();
         ServerSocket ss = new ServerSocket(7131);
+        final String ENDSTR = "DHLDHLDHLEND";
 
         while (true) {
             Socket connSocket = ss.accept();
-            System.out.println("BEG");
-            BufferedReader inFromClient =
-                    new BufferedReader(new InputStreamReader(connSocket.getInputStream()));
-            char[] buf = new char[1024];
-            int n = inFromClient.read(buf);
-            System.out.println(n);
-            String clientSentence = new String(buf);
-//            String clientSentence = inFromClient.readLine();
-            System.out.println("Received: " + clientSentence);
+//            System.out.println("BEG");
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(
+                    connSocket.getInputStream(), "UTF8"));
+
+            StringBuilder sb = new StringBuilder();
+            char[] buf = new char[5];
+            while (true) {
+                int n = inFromClient.read(buf);
+//                System.out.println(n);
+                sb.append(buf, 0, n);
+                if (sb.length() > ENDSTR.length() && sb.substring(sb.length() - ENDSTR.length()).equals(ENDSTR)) {
+                    break;
+                }
+            }
+            String recvText = sb.substring(0, sb.length() - ENDSTR.length());
+//            System.out.println("Received: " + recvText);
+            List<String> segmented = segmenter.segmentString(recvText);
+            String segmentedText = String.join(" ", segmented);
 
             DataOutputStream outToClient = new DataOutputStream(connSocket.getOutputStream());
-            String capitalizedSentence = clientSentence.toUpperCase() + "11\n";
-            outToClient.writeBytes(capitalizedSentence);
+            String result = segmentedText + ENDSTR;
+//            capitalizedSentence.getBytes("UTF8");
+            outToClient.write(result.getBytes("UTF8"));
+            connSocket.close();
+//            break;
         }
     }
 
