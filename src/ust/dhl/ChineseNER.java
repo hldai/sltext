@@ -104,7 +104,7 @@ public class ChineseNER {
         writer.close();
     }
 
-    public static void main(String[] args) throws Exception {
+    private static void lineArticleNERMP() throws Exception {
         Properties props = new Properties();
         props.put("tokenize.options", "untokenizable=noneKeep");
         AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
@@ -118,5 +118,54 @@ public class ChineseNER {
         }
 
 //        lineArticleNER();
+    }
+
+    private static void paragraphNER() throws Exception {
+        String segParagraphFile = "e:/data/wechat/sel_articles_contents_seg.txt";
+        String dstFile = "e:/data/wechat/sel_articles_contents_ner.txt";
+
+        Properties props = new Properties();
+        props.put("tokenize.options", "untokenizable=noneKeep");
+        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
+                props);
+
+        BufferedReader reader = IOUtils.bufReader(segParagraphFile);
+        BufferedWriter writer = IOUtils.bufWriter(dstFile);
+        String line = null;
+        int linecnt = 0;
+        while ((line = reader.readLine()) != null) {
+            String[] vals = line.split("\t");
+
+            String content = reader.readLine();
+            List<Triple<String, Integer, Integer>> triples = classifier.classifyToCharacterOffsets(content);
+            int cnt = 0;
+            for (Triple<String, Integer, Integer> trip : triples)
+                if (!trip.first.equals("MISC"))
+                    ++cnt;
+
+            writer.write(String.format("%s\t%s\t%d\n", vals[0], vals[1], cnt));
+            for (Triple<String, Integer, Integer> trip : triples) {
+                if (trip.first.equals("MISC"))
+                    continue;
+
+                writer.write(String.format("%d\t%d\t%s\t%s\n",
+                        trip.second, trip.third, trip.first(),
+                        content.substring(trip.second, trip.third)));
+            }
+
+            ++linecnt;
+//            if (linecnt == 10)
+//                break;
+            if (linecnt % 1000 == 0)
+                System.out.println(linecnt);
+//            writer.write(segmentedText);
+//            writer.write("\n");
+        }
+        reader.close();
+        writer.close();
+    }
+
+    public static void main(String[] args) throws Exception {
+        paragraphNER();
     }
 }

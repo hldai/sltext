@@ -69,6 +69,33 @@ public class ChineseSegmenter {
         }
     }
 
+    private static void segmentParagraphs() throws Exception {
+        CRFClassifier<CoreLabel> segmenter = initSegmenter();
+        String paragraphsFile = "e:/data/wechat/sel_articles_contents.txt";
+        String dstFile = "e:/data/wechat/sel_articles_contents_seg.txt";
+
+        BufferedReader reader = IOUtils.bufReader(paragraphsFile);
+        BufferedWriter writer = IOUtils.bufWriter(dstFile);
+        String line = null;
+        int cnt = 0;
+        while ((line = reader.readLine()) != null) {
+            writer.write(String.format("%s\n", line));
+
+            String content = reader.readLine();
+            List<String> segmented = segmenter.segmentString(content);
+            String segmentedText = String.join("\t", segmented);
+            writer.write(String.format("%s\n", segmentedText));
+
+            ++cnt;
+//            if (cnt == 10)
+//                break;
+            if (cnt % 1000 == 0)
+                System.out.println(cnt);
+        }
+        reader.close();
+        writer.close();
+    }
+
     private static void segmentTextFile() {
         CRFClassifier<CoreLabel> segmenter = initSegmenter();
         for (int i = 0; i < 5; ++i) {
@@ -221,5 +248,6 @@ public class ChineseSegmenter {
 //        segmentRedirects();
 //        segmentOrgNames();
         segmentTCP();
+//        segmentParagraphs();
     }
 }
