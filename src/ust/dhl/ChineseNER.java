@@ -14,7 +14,27 @@ import java.util.Properties;
  * Created by p_hliangdai on 2017/4/23.
  */
 public class ChineseNER {
-    static class NERThread extends Thread{
+    static class ParagraphNERThread extends Thread {
+        String paragraphsFile;
+        String dstFile;
+        AbstractSequenceClassifier<CoreLabel> classifier;
+
+        ParagraphNERThread(AbstractSequenceClassifier<CoreLabel> classifier, String paragraphsFile, String dstFile) {
+            this.classifier = classifier;
+            this.paragraphsFile = paragraphsFile;
+            this.dstFile = dstFile;
+        }
+
+        public void run() {
+            try {
+                paragraphNER(classifier, paragraphsFile, dstFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class NERThread extends Thread {
         String articlesFile;
         String dstFile;
         AbstractSequenceClassifier<CoreLabel> classifier;
@@ -120,21 +140,19 @@ public class ChineseNER {
 //        lineArticleNER();
     }
 
-    private static void paragraphNER() throws Exception {
-        String segParagraphFile = "e:/data/wechat/sel_articles_contents_seg.txt";
-        String dstFile = "e:/data/wechat/sel_articles_contents_ner.txt";
-
-        Properties props = new Properties();
-        props.put("tokenize.options", "untokenizable=noneKeep");
-        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
-                props);
-
+    private static void paragraphNER(AbstractSequenceClassifier<CoreLabel> classifier, String segParagraphFile,
+                                     String dstFile) throws Exception {
         BufferedReader reader = IOUtils.bufReader(segParagraphFile);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
         String line = null;
+        String curArticleId = null;
+        int curArticleParaIdx = 0;
         int linecnt = 0;
         while ((line = reader.readLine()) != null) {
-            String[] vals = line.split("\t");
+            if (curArticleId == null || !line.equals(curArticleId)) {
+                curArticleParaIdx = 0;
+                curArticleId = line;
+            }
 
             String content = reader.readLine();
             List<Triple<String, Integer, Integer>> triples = classifier.classifyToCharacterOffsets(content);
@@ -143,7 +161,7 @@ public class ChineseNER {
                 if (!trip.first.equals("MISC"))
                     ++cnt;
 
-            writer.write(String.format("%s\t%s\t%d\n", vals[0], vals[1], cnt));
+            writer.write(String.format("%s\t%d\t%d\n", curArticleId, curArticleParaIdx, cnt));
             for (Triple<String, Integer, Integer> trip : triples) {
                 if (trip.first.equals("MISC"))
                     continue;
@@ -153,10 +171,12 @@ public class ChineseNER {
                         content.substring(trip.second, trip.third)));
             }
 
+            ++curArticleParaIdx;
+
             ++linecnt;
-//            if (linecnt == 10)
+//            if (linecnt == 100)
 //                break;
-            if (linecnt % 1000 == 0)
+            if (linecnt % 10000 == 0)
                 System.out.println(linecnt);
 //            writer.write(segmentedText);
 //            writer.write("\n");
@@ -165,7 +185,34 @@ public class ChineseNER {
         writer.close();
     }
 
+    private static void paragraphNERJob() throws Exception {
+        String segParagraphFile = "e:/data/wechat/sel_articles_contents_seg.txt";
+        String dstFile = "e:/data/wechat/sel_articles_contents_ner.txt";
+
+        Properties props = new Properties();
+        props.put("tokenize.options", "untokenizable=noneKeep");
+        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
+                props);
+        paragraphNER(classifier, segParagraphFile, dstFile);
+    }
+
+    private static void paragraphNERMP() throws Exception {
+        Properties props = new Properties();
+        props.put("tokenize.options", "untokenizable=noneKeep");
+        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
+                props);
+
+        for (int i = 0; i < 4; ++i) {
+            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
+            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_ner.txt", i);
+
+            ParagraphNERThread t = new ParagraphNERThread(classifier, paragraphsFile, dstFile);
+            t.start();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        paragraphNER();
+//        paragraphNER();
+        paragraphNERMP();
     }
 }

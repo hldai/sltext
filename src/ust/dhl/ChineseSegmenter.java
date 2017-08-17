@@ -62,7 +62,16 @@ public class ChineseSegmenter {
         List<String> segmented = segmenter.segmentString(text);
         LinkedList<String> segmentedNew = new LinkedList<>();
         for (String w : segmented) {
+            if (w.equals("市卫")) {
+                segmentedNew.add(w.substring(0, 1));
+                segmentedNew.add(w.substring(1));
+                continue;
+            }
+
             if (w.length() <= 2 || excludeWords.contains(w)) {
+//                if (w.length() <= 2 && w.startsWith("市")) {
+//                    System.out.println(w);
+//                }
                 segmentedNew.add(w);
             } else if (w.endsWith("省") || w.endsWith("市") || w.endsWith("乡")
                     || w.endsWith("镇") || w.endsWith("区") || w.endsWith("县") || w.endsWith("局")
@@ -71,6 +80,7 @@ public class ChineseSegmenter {
                 segmentedNew.add(w.substring(w.length() - 1));
             } else if (w.startsWith("省") || w.startsWith("市") || w.startsWith("乡")
                     || w.startsWith("区")) {
+//                System.out.println("in");
                 segmentedNew.add(w.substring(0, 1));
                 segmentedNew.add(w.substring(1));
             } else {
@@ -88,6 +98,6 @@ public class ChineseSegmenter {
 //        segmentRedirects();
 //        segmentOrgNames();
 //        segmentTCP();
-//        segmentParagraphs();
+//        segmentParasgraphs();
     }
 }
