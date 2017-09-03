@@ -203,8 +203,10 @@ public class ChineseNER {
                 props);
 
         for (int i = 0; i < 4; ++i) {
-            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
-            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_ner.txt", i);
+//            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
+//            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_ner.txt", i);
+            String paragraphsFile = String.format("e:/data/wechat/split/content_1k_%d_seg.txt", i);
+            String dstFile = String.format("e:/data/wechat/split/content_1k_%d_ner.txt", i);
 
             ParagraphNERThread t = new ParagraphNERThread(classifier, paragraphsFile, dstFile);
             t.start();

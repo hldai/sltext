@@ -90,14 +90,4 @@ public class ChineseSegmenter {
 
         return segmentedNew;
     }
-
-    public static void main(String[] args) throws Exception {
-//        segmentStdin();
-//        segmentTextFile();
-//        segmentNicknames();
-//        segmentRedirects();
-//        segmentOrgNames();
-//        segmentTCP();
-//        segmentParasgraphs();
-    }
 }

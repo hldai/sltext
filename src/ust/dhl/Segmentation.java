@@ -47,6 +47,9 @@ public class Segmentation {
             writer.write(String.format("%s\n", line));
 
             String content = reader.readLine();
+            if (content == null) {
+                System.out.println("content null");
+            }
             List<String> segmented = segmenter.segmentString(content, false);
             String segmentedText = String.join("\t", segmented);
             writer.write(String.format("%s\n", segmentedText));
@@ -82,8 +85,10 @@ public class Segmentation {
     private static void segmentParagraphsMP() {
         ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
         for (int i = 0; i < 4; ++i) {
-            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d.txt", i);
-            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
+//            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d.txt", i);
+//            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
+            String paragraphsFile = String.format("e:/data/wechat/split/content_1k_%d.txt", i);
+            String dstFile = String.format("e:/data/wechat/split/content_1k_%d_seg.txt", i);
 
             SegThread segThread = new SegThread(segmenter, paragraphsFile, dstFile);
             segThread.start();
@@ -255,8 +260,8 @@ public class Segmentation {
 //        segmentNicknames();
 //        segmentRedirects();
 //        segmentOrgNames();
-        segmentTCP();
+//        segmentTCP();
 //        segmentParagraphsJob();
-//        segmentParagraphsMP();
+        segmentParagraphsMP();
     }
 }
