@@ -228,15 +228,45 @@ public class Tokenize {
         for (int i = 0; i < numThreads; ++i) {
 //            if (i == 0)
 //                continue;
-            String reviewsFile = String.format("e:/data/yelp/split/yelp_reviews_%d.txt", i);
-            String dstFile = String.format("e:/data/yelp/split/yelp_reviews_tok_%d.txt", i);
+            String reviewsFile = String.format("d:/data/yelp/split/yelp_reviews_%d.txt", i);
+            String dstFile = String.format("d:/data/yelp/split/yelp_reviews_tok_%d.txt", i);
 
             TokenizeThread tokenizeThread = new TokenizeThread(reviewsFile, dstFile);
             tokenizeThread.start();
         }
     }
 
+    public static void tokenizeEveryLine() throws Exception {
+//        String filename = "d:/data/yelp/tmp/biz_names.txt";
+//        String dstFile = "d:/data/yelp/tmp/biz_names_tokenized.txt";
+        String filename = "d:/data/yelp/tmp/mention_name_str.txt";
+        String dstFile = "d:/data/yelp/auxiliary/mention_name_str_tokenized.txt";
+
+        CoreLabelTokenFactory tf = new CoreLabelTokenFactory();
+        BufferedReader reader = IOUtils.bufReader(filename);
+        BufferedWriter writer = IOUtils.bufWriter(dstFile);
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            PTBTokenizer ptbt = new PTBTokenizer<CoreLabel>(new StringReader(line), tf,
+                    "untokenizable=noneKeep");
+            List<CoreLabel> tokens = ptbt.tokenize();
+            boolean first = true;
+            for (CoreLabel cl : tokens) {
+                if (first) {
+                    writer.write(cl.value());
+                    first = false;
+                } else {
+                    writer.write(String.format(" %s", cl.value()));
+                }
+            }
+            writer.write("\n");
+        }
+        reader.close();
+        writer.close();
+    }
+
     public static void main(String[] args) throws Exception {
+        tokenizeEveryLine();
 //        parseMT();
 //        tokenizeMT();
 //        lexicalizedParse();
