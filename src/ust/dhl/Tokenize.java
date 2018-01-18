@@ -239,8 +239,10 @@ public class Tokenize {
     public static void tokenizeEveryLine() throws Exception {
 //        String filename = "d:/data/yelp/tmp/biz_names.txt";
 //        String dstFile = "d:/data/yelp/tmp/biz_names_tokenized.txt";
-        String filename = "d:/data/yelp/tmp/mention_name_str.txt";
-        String dstFile = "d:/data/yelp/auxiliary/mention_name_str_tokenized.txt";
+//        String filename = "d:/data/yelp/tmp/mention_name_str.txt";
+//        String dstFile = "d:/data/yelp/auxiliary/mention_name_str_tokenized.txt";
+        String filename = "d:/data/yelp/casestudy/cs-mention-name-strs.txt";
+        String dstFile = "d:/data/yelp/casestudy/cs-mention-name-strs-tokenized.txt";
 
         CoreLabelTokenFactory tf = new CoreLabelTokenFactory();
         BufferedReader reader = IOUtils.bufReader(filename);
