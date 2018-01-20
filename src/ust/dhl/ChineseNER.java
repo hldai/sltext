@@ -186,13 +186,15 @@ public class ChineseNER {
     }
 
     private static void paragraphNERJob() throws Exception {
-        String segParagraphFile = "e:/data/wechat/sel_articles_contents_seg.txt";
-        String dstFile = "e:/data/wechat/sel_articles_contents_ner.txt";
+//        String segParagraphFile = "e:/data/wechat/sel_articles_contents_seg.txt";
+//        String dstFile = "e:/data/wechat/sel_articles_contents_ner.txt";
+        String segParagraphFile = "e:/data/wechat/tmp/article_v2_contents_para_seg.txt";
+        String dstFile = "e:/data/wechat/tmp/article_v2_contents_para_ner.txt";
 
         Properties props = new Properties();
         props.put("tokenize.options", "untokenizable=noneKeep");
-        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(DEF_SERIALIZEDCLASSIFIER,
-                props);
+        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(
+                DEF_SERIALIZEDCLASSIFIER, props);
         paragraphNER(classifier, segParagraphFile, dstFile);
     }
 
@@ -214,7 +216,7 @@ public class ChineseNER {
     }
 
     public static void main(String[] args) throws Exception {
-//        paragraphNER();
-        paragraphNERMP();
+        paragraphNERJob();
+//        paragraphNERMP();
     }
 }

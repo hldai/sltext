@@ -51,13 +51,14 @@ public class Segmentation {
                 System.out.println("content null");
             }
             List<String> segmented = segmenter.segmentString(content, false);
-            String segmentedText = String.join("\t", segmented);
+//            String segmentedText = String.join("\t", segmented);
+            String segmentedText = String.join(" ", segmented);
             writer.write(String.format("%s\n", segmentedText));
 
             ++cnt;
-//            if (cnt == 1000)
+//            if (cnt == 10)
 //                break;
-            if (cnt % 10000 == 0)
+            if (cnt % 100000 == 0)
                 System.out.println(cnt);
         }
         reader.close();
@@ -71,15 +72,15 @@ public class Segmentation {
 //        String dstFile = "e:/data/wechat/sel_articles_contents_seg.txt";
 
         ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
-//        String paragraphsFile = "e:/data/wechat/split/content_20w_0.txt";
-//        String dstFile = "e:/data/wechat/split/content_20w_0_seg.txt";
-//        segmentParagraphs(segmenter, paragraphsFile, dstFile);
-        for (int i = 1; i < 4; ++i) {
-            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d.txt", i);
-            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
-
-            segmentParagraphs(segmenter, paragraphsFile, dstFile);
-        }
+        String paragraphsFile = "e:/data/wechat/tmp/article_v2_contents_para.txt";
+        String dstFile = "e:/data/wechat/tmp/article_v2_contents_para_seg.txt";
+        segmentParagraphs(segmenter, paragraphsFile, dstFile);
+//        for (int i = 1; i < 4; ++i) {
+//            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d.txt", i);
+//            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
+//
+//            segmentParagraphs(segmenter, paragraphsFile, dstFile);
+//        }
     }
 
     private static void segmentParagraphsMP() {
@@ -214,44 +215,26 @@ public class Segmentation {
         writer.close();
     }
 
-    private static void segmentTCP() throws Exception {
-//        CRFClassifier<CoreLabel> segmenter = initSegmenter();
+    private static void segmentLines(String srcFileName, String dstFileName) throws Exception {
         ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
-        ServerSocket ss = new ServerSocket(7131);
-        final String ENDSTR = "DHLDHLDHLEND";
-        System.out.println("server started.");
 
-        while (true) {
-            System.out.println("WAIT");
-            Socket connSocket = ss.accept();
-            System.out.println("BEG");
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(
-                    connSocket.getInputStream(), "UTF8"));
-
-            StringBuilder sb = new StringBuilder();
-            char[] buf = new char[5];
-            while (true) {
-                int n = inFromClient.read(buf);
-//                System.out.println(n);
-                sb.append(buf, 0, n);
-                if (sb.length() > ENDSTR.length() && sb.substring(sb.length() - ENDSTR.length()).equals(ENDSTR)) {
-                    break;
-                }
-            }
-            String recvText = sb.substring(0, sb.length() - ENDSTR.length());
-            System.out.println("Received: " + recvText);
-            List<String> segmented = segmenter.segmentString(recvText);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(srcFileName), "UTF8"));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(dstFileName), "UTF8"));
+        String line = null;
+        int cnt = 0;
+        while ((line = reader.readLine()) != null) {
+            List<String> segmented = segmenter.segmentString(line);
             String segmentedText = String.join(" ", segmented);
-            System.out.println("seg: " + segmentedText);
+            writer.write(String.format("%s\n", segmentedText));
 
-            DataOutputStream outToClient = new DataOutputStream(connSocket.getOutputStream());
-            String result = segmentedText + ENDSTR;
-//            capitalizedSentence.getBytes("UTF8");
-            outToClient.write(result.getBytes("UTF8"));
-            System.out.println("send");
-            connSocket.close();
-//            break;
+            ++cnt;
+            if (cnt % 100000 == 0)
+                System.out.println(cnt);
         }
+        reader.close();
+        writer.close();
     }
 
     public static void main(String[] args) throws Exception {
@@ -260,8 +243,8 @@ public class Segmentation {
 //        segmentNicknames();
 //        segmentRedirects();
 //        segmentOrgNames();
-//        segmentTCP();
 //        segmentParagraphsJob();
-        segmentParagraphsMP();
+//        segmentParagraphsMP();
+        segmentLines("e:/data/wechat/tmp/biz_intros.txt", "e:/data/wechat/tmp/biz_intros_seg.txt");
     }
 }

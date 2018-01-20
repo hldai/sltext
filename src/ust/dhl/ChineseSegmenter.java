@@ -51,7 +51,7 @@ public class ChineseSegmenter {
     }
 
     public List<String> segmentString(String text) {
-        return segmentString(text, true);
+        return segmentString(text, false);
     }
 
     public List<String> segmentString(String text, boolean extraProcess) {
