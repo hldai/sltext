@@ -10,7 +10,7 @@ import java.util.List;
 public class ChineseSegServer {
     private static final String SEG_BASE_DIR = "d:/lib/stanford-segmenter-2016-10-31/data";
     private static final String EXCLUDE_WORDS_FILE = "e:/data/res/seg_exclude_words.txt";
-    private ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+    private ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
 
     public String segment(String text) {
         List<String> segmented = segmenter.segmentString(text);

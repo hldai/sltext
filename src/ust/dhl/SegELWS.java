@@ -11,17 +11,18 @@ import java.util.*;
 
 /**
  * Created by p_hliangdai on 2017/4/27.
+ * do segmentation jobs
  */
-public class Segmentation {
+public class SegELWS {
     private static final String SEG_BASE_DIR = "d:/lib/stanford-segmenter-2016-10-31/data";
     private static final String EXCLUDE_WORDS_FILE = "e:/data/res/seg_exclude_words.txt";
 
     static class SegThread extends Thread {
         String paragraphsFile;
         String dstFile;
-        ChineseSegmenter segmenter;
+        ChSegmenterELWS segmenter;
 
-        SegThread(ChineseSegmenter segmenter, String paragraphsFile, String dstFile) {
+        SegThread(ChSegmenterELWS segmenter, String paragraphsFile, String dstFile) {
             this.segmenter = segmenter;
             this.paragraphsFile = paragraphsFile;
             this.dstFile = dstFile;
@@ -37,7 +38,7 @@ public class Segmentation {
         }
     }
 
-    private static void segmentParagraphs(ChineseSegmenter segmenter, String paragraphsFile,
+    private static void segmentParagraphs(ChSegmenterELWS segmenter, String paragraphsFile,
                                           String dstFile) throws Exception {
         BufferedReader reader = IOUtils.bufReader(paragraphsFile);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
@@ -71,7 +72,7 @@ public class Segmentation {
 //        String paragraphsFile = "e:/data/wechat/sel_articles_contents.txt";
 //        String dstFile = "e:/data/wechat/sel_articles_contents_seg.txt";
 
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
         String paragraphsFile = "e:/data/wechat/tmp/article_v2_contents_para.txt";
         String dstFile = "e:/data/wechat/tmp/article_v2_contents_para_seg.txt";
         segmentParagraphs(segmenter, paragraphsFile, dstFile);
@@ -84,7 +85,7 @@ public class Segmentation {
     }
 
     private static void segmentParagraphsMP() {
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
         for (int i = 0; i < 4; ++i) {
 //            String paragraphsFile = String.format("e:/data/wechat/split/content_20w_%d.txt", i);
 //            String dstFile = String.format("e:/data/wechat/split/content_20w_%d_seg.txt", i);
@@ -108,7 +109,7 @@ public class Segmentation {
 //    }
 
     private static void segmentStdin() {
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
         Scanner in = new Scanner(System.in);
         System.out.println("waiting for input:\n");
         while (in.hasNext()) {
@@ -126,7 +127,7 @@ public class Segmentation {
         String nicknameFile = "e:/data/wechat/account_nickname_fil.txt";
         String dstFile = "e:/data/wechat/account_nickname_fil_seg.txt";
 //        CRFClassifier<CoreLabel> segmenter = initSegmenter();
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
 
         BufferedReader reader = IOUtils.bufReader(nicknameFile);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
@@ -158,7 +159,7 @@ public class Segmentation {
         String redirectsFile = "e:/data/res/wiki/redirects_cn.txt";
         String dstFile = "e:/data/res/wiki/redirects_cn_seg.txt";
 //        CRFClassifier<CoreLabel> segmenter = initSegmenter();
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
 
         BufferedReader reader = IOUtils.bufReader(redirectsFile);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
@@ -190,7 +191,7 @@ public class Segmentation {
         String orgNamesFile = "e:/data/wechat/mentioned_org_names.txt";
         String dstFile = "e:/data/wechat/mentioned_org_names_seg.txt";
 //        CRFClassifier<CoreLabel> segmenter = initSegmenter();
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
 
         BufferedReader reader = IOUtils.bufReader(orgNamesFile);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
@@ -216,7 +217,7 @@ public class Segmentation {
     }
 
     private static void segmentLines(String srcFileName, String dstFileName) throws Exception {
-        ChineseSegmenter segmenter = new ChineseSegmenter(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
+        ChSegmenterELWS segmenter = new ChSegmenterELWS(EXCLUDE_WORDS_FILE, SEG_BASE_DIR);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 new FileInputStream(srcFileName), "UTF8"));

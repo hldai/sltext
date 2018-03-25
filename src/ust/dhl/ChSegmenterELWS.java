@@ -12,11 +12,11 @@ import java.util.*;
 /**
  * Created by p_hliangdai on 2017/4/27.
  */
-public class ChineseSegmenter {
+public class ChSegmenterELWS {
     private CRFClassifier<CoreLabel> segmenter;
     private Set<String> excludeWords = new HashSet<>();
 
-    public ChineseSegmenter(String excludeWordsFile, String dataBaseDir) {
+    public ChSegmenterELWS(String excludeWordsFile, String dataBaseDir) {
         initSegmenter(dataBaseDir);
         initExcludeWords(excludeWordsFile);
     }
