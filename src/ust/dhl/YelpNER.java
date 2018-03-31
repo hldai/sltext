@@ -99,21 +99,6 @@ public class YelpNER {
         return rev;
     }
 
-    private static void tryNER() throws Exception {
-        String serializedClassifier = "d:/lib/stanford-ner-2016-10-31/classifiers/english.conll.4class.distsim.crf.ser.gz";
-        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
-
-        String text = "All of us like walnut shrimp from Ping Pang Pong and China Mama. I recommend Retro Ranch, " +
-                "Fashion by Robert Black, France's or the new Vintage shop next to Hula's and Lola Coffee on " +
-                "Central Ave.";
-        List<Triple<String, Integer, Integer>> triples = classifier.classifyToCharacterOffsets(text);
-
-        for (Triple<String, Integer, Integer> trip : triples) {
-            String ns = text.substring(trip.second, trip.third).replaceAll("\\s+", " ");
-            System.out.printf("%d\t%d\t%s\t%s\n", trip.second, trip.third, trip.first, ns);
-        }
-    }
-
     private static void performNER() throws Exception {
         String reviewFile = "e:/data/yelp/yelp_reviews.txt";
         String dstFile = "e:/data/yelp/yelp_review_mentions_4class.txt";
