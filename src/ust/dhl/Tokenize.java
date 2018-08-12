@@ -241,8 +241,17 @@ public class Tokenize {
 //        String dstFile = "d:/data/yelp/tmp/biz_names_tokenized.txt";
 //        String filename = "d:/data/yelp/tmp/mention_name_str.txt";
 //        String dstFile = "d:/data/yelp/auxiliary/mention_name_str_tokenized.txt";
-        String filename = "d:/data/yelp/casestudy/cs-mention-name-strs.txt";
-        String dstFile = "d:/data/yelp/casestudy/cs-mention-name-strs-tokenized.txt";
+//        String filename = "d:/data/aspect/semeval14/laptops_train_texts.txt";
+//        String dstFile = "d:/data/aspect/semeval14/laptops_train_texts_tok.txt";
+//        String filename = "d:/data/amazon/laptops-reivews-sent-text.txt";
+//        String dstFile = "d:/data/amazon/laptops-reivews-sent-tok-text.txt";
+//        String filename = "d:/data/aspect/semeval14/restaurant/restaurants_train_texts.txt";
+//        String dstFile = "d:/data/aspect/semeval14/restaurant/restaurants_train_texts_tok.txt";
+//        String filename = "d:/data/aspect/semeval14/restaurant/restaurants_test_texts.txt";
+//        String dstFile = "d:/data/aspect/semeval14/restaurant/restaurants_test_texts_tok.txt";
+        String filename = "d:/data/res/yelp-review-sents-round-9-rand-part.txt";
+        String dstFile = "d:/data/res/yelp-review-tok-sents-round-9.txt";
+        boolean toLower = true;
 
         CoreLabelTokenFactory tf = new CoreLabelTokenFactory();
         BufferedReader reader = IOUtils.bufReader(filename);
@@ -254,11 +263,12 @@ public class Tokenize {
             List<CoreLabel> tokens = ptbt.tokenize();
             boolean first = true;
             for (CoreLabel cl : tokens) {
+                String w = toLower ? cl.value().toLowerCase() : cl.value();
                 if (first) {
-                    writer.write(cl.value());
+                        writer.write(w);
                     first = false;
                 } else {
-                    writer.write(String.format(" %s", cl.value()));
+                    writer.write(String.format(" %s", w));
                 }
             }
             writer.write("\n");
