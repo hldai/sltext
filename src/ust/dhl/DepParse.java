@@ -88,7 +88,8 @@ public class DepParse {
         MaxentTagger tagger = new MaxentTagger(taggerPath);
         DependencyParser parser = DependencyParser.loadFromModelFile(modelPath);
 
-        String line = "boot time is super fast .";
+        String line = "The system is horrible .";
+//        String line = "I like the screen .";
         LinkedList<Word> sent = new LinkedList<>();
         String[] words = line.split(" ");
         for (String w: words)
@@ -109,6 +110,7 @@ public class DepParse {
 
     public static void main(String[] args) throws IOException {
 //        parseTest();
+
 //        parseLineFile("d:/data/aspect/huliu04/sents-text.txt",
 //                "d:/data/aspect/huliu04/sents-text-dep.txt",
 //                "d:/data/aspect/huliu04/sents-text-pos.txt");
@@ -133,8 +135,14 @@ public class DepParse {
 //                "d:/data/aspect/semeval14/restaurant/restaurants-test-rule-dep.txt",
 //                "d:/data/aspect/semeval14/restaurant/restaurants-test-rule-pos.txt");
 
-        parseLineFile("d:/data/res/yelp-review-eng-tok-sents-round-9.txt",
-                "d:/data/res/yelp-review-round-9-dep.txt",
-                "d:/data/res/yelp-review-round-9-pos.txt", false);
+//        parseLineFile("d:/data/res/yelp/eng-part/yelp-eng-tok-sents-r9-rand-0_02.txt",
+//                "d:/data/res/yelp/eng-part/yelp-eng-tok-sents-r9-rand-0_02-dep.txt",
+//                "d:/data/res/yelp/eng-part/yelp-eng-tok-sents-r9-rand-0_02-pos.txt",
+//                false);
+
+        parseLineFile("d:/data/res/yelp/eng-part/yelp-rest-sents-r9-tok-eng-part0_04.txt",
+                "d:/data/res/yelp/eng-part/yelp-rest-sents-r9-tok-eng-part0_04-dep.txt",
+                "d:/data/res/yelp/eng-part/yelp-rest-sents-r9-tok-eng-part0_04-pos.txt",
+                false);
     }
 }

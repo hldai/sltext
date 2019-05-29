@@ -14,9 +14,7 @@ public class LineNER {
                 "4class.distsim.crf.ser.gz";
         AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
 
-        String text = "All of us like walnut shrimp from Ping Pang Pong and China Mama. I recommend Retro Ranch, " +
-                "Fashion by Robert Black, France's or the new Vintage shop next to Hula's and Lola Coffee on " +
-                "Central Ave.";
+        String text = "The Obamas are now worth 30 times more than when they entered the White House. Here’s what they do with their millions https://t.co/8N00alwvae";
         List<Triple<String, Integer, Integer>> triples = classifier.classifyToCharacterOffsets(text);
 
         for (Triple<String, Integer, Integer> trip : triples) {
@@ -57,8 +55,12 @@ public class LineNER {
     }
 
     public static void main(String[] args) throws Exception {
-        String textFile = "d:/data/quora/answer-text.txt";
-        String dstFile = "d:/data/quora/answer-text-ner.txt";
+//        String textFile = "d:/data/quora/answer-text.txt";
+//        String dstFile = "d:/data/quora/answer-text-ner.txt";
+//        String textFile = "d:/data/fet/tweets-09-12-text.txt";
+//        String dstFile = "d:/data/fet/tweets-09-12-text-ner.txt";
+        String textFile = "d:/data/fet/tweets-1217-nodup-text.txt";
+        String dstFile = "d:/data/fet/tweets-1217-nodup-text-ner.txt";
 //        tryNER();
         processFile(textFile, dstFile);
     }

@@ -237,29 +237,26 @@ public class Tokenize {
     }
 
     public static void tokenizeEveryLine() throws Exception {
-//        String filename = "d:/data/yelp/tmp/biz_names.txt";
-//        String dstFile = "d:/data/yelp/tmp/biz_names_tokenized.txt";
-//        String filename = "d:/data/yelp/tmp/mention_name_str.txt";
-//        String dstFile = "d:/data/yelp/auxiliary/mention_name_str_tokenized.txt";
-//        String filename = "d:/data/aspect/semeval14/laptops_train_texts.txt";
-//        String dstFile = "d:/data/aspect/semeval14/laptops_train_texts_tok.txt";
-//        String filename = "d:/data/amazon/laptops-reivews-sent-text.txt";
-//        String dstFile = "d:/data/amazon/laptops-reivews-sent-tok-text.txt";
-//        String filename = "d:/data/aspect/semeval14/restaurant/restaurants_train_texts.txt";
-//        String dstFile = "d:/data/aspect/semeval14/restaurant/restaurants_train_texts_tok.txt";
-//        String filename = "d:/data/aspect/semeval14/restaurant/restaurants_test_texts.txt";
-//        String dstFile = "d:/data/aspect/semeval14/restaurant/restaurants_test_texts_tok.txt";
-        String filename = "d:/data/res/yelp-review-sents-round-9-rand-part.txt";
-        String dstFile = "d:/data/res/yelp-review-tok-sents-round-9.txt";
+//        String filename = "d:/data/aspect/semeval14/laptops/laptops_train_texts.txt";
+//        String dstFile = "d:/data/aspect/semeval14/laptops/laptops_train_texts_tokfc.txt";
+//        String filename = "d:/data/aspect/semeval15/restaurants/restaurants_train_texts.txt";
+//        String dstFile = "d:/data/aspect/semeval15/restaurants/restaurants_train_texts_tokfc.txt";
+        String filename = "d:/data/aspect/semeval14/laptops/laptops_train_texts.txt";
+        String dstFile = "d:/data/aspect/semeval14/laptops/laptops_train_texts_tok_pos.txt";
+//        String dstSpansFile = "d:/data/aspect/semeval14/laptops/laptops_test_texts_tok_pos.txt";
         boolean toLower = true;
+        boolean includeSpans = true;
+//        boolean toLower = false;
+        String optionsStr = "untokenizable=noneKeep";
+//        String optionsStr = "untokenizable=noneKeep,ptb3Escaping=false";
 
         CoreLabelTokenFactory tf = new CoreLabelTokenFactory();
         BufferedReader reader = IOUtils.bufReader(filename);
         BufferedWriter writer = IOUtils.bufWriter(dstFile);
         String line = null;
+        int cnt = 0;
         while ((line = reader.readLine()) != null) {
-            PTBTokenizer ptbt = new PTBTokenizer<CoreLabel>(new StringReader(line), tf,
-                    "untokenizable=noneKeep");
+            PTBTokenizer ptbt = new PTBTokenizer<CoreLabel>(new StringReader(line), tf, optionsStr);
             List<CoreLabel> tokens = ptbt.tokenize();
             boolean first = true;
             for (CoreLabel cl : tokens) {
@@ -272,6 +269,24 @@ public class Tokenize {
                 }
             }
             writer.write("\n");
+
+            if (includeSpans) {
+                first = true;
+                for (CoreLabel cl : tokens) {
+                    if (first) {
+                        writer.write(String.format("%d %d", cl.beginPosition(), cl.endPosition()));
+                        first = false;
+                    } else {
+                        writer.write(String.format(" %d %d", cl.beginPosition(), cl.endPosition()));
+                    }
+                }
+                writer.write("\n");
+            }
+
+            ++cnt;
+            if (cnt % 1000000 == 0) {
+                System.out.println(cnt);
+            }
         }
         reader.close();
         writer.close();
